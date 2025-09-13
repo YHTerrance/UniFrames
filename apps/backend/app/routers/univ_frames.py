@@ -9,16 +9,19 @@ from app.services.univ_frames_service import (
 
 router = APIRouter(prefix="/frames", tags=["frames"])
 
-@router.get("/by-name/")
+@router.get("/by-name")
 def frames_by_university_name(
     name: str = Query(..., description="예: 'Carnegie Mellon University'"),
     sync_if_empty: bool = Query(True, description="DB에 없으면 R2의 '<name>/'에서 즉시 동기화 시도"),
 ) -> Dict[str, Any]:
+    print("DEBUG >>> API called with name:", name)
     uid = find_university_id_by_name(name)
+    print("DEBUG >>> UID:", uid)
     if uid is None:
         raise HTTPException(status_code=404, detail=f"University not found for '{name}'")
 
     frames = get_frames_for_university_id(uid)
+    print("DEBUG >>> Frames before sync:", frames)
     if not frames and sync_if_empty:
         on_demand_sync_by_folder(name, uid)
         frames = get_frames_for_university_id(uid)
@@ -31,7 +34,7 @@ def frames_by_university_name(
             "frames": [],
             "message": f"No frames found for '{name}'.",
         }
-
+    print("DEBUG >>> Frames after sync:", frames)
     return {
         "university_id": uid,
         "university_name": name,
