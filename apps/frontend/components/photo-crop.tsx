@@ -31,8 +31,6 @@ export function PhotoCrop({ imageUrl, onCropComplete }: PhotoCropProps) {
 
   const createCroppedImage = useCallback(
     async (cropAreaPixels: CropArea) => {
-      console.log("creating cropped image");
-
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       const image = new Image();

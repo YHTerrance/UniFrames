@@ -19,45 +19,52 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
   const [previewUrl, setPreviewUrl] = useState<string>("")
 
   const generateFramedImage = async () => {
-    if (!canvasRef.current) return
+    if (!canvasRef.current) return;
 
-    setIsGenerating(true)
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext("2d")
+    setIsGenerating(true);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
 
-    if (!ctx) return
+    if (!ctx) return;
 
-    // Set canvas size
-    canvas.width = 400
-    canvas.height = 400
+    // Set high-resolution canvas size (3x higher than display)
+    const pixelRatio = window.devicePixelRatio || 1;
+    const baseSize = 400;
+    const highResSize = baseSize * 3; // 1200x1200 for much higher quality
+
+    canvas.width = highResSize * pixelRatio;
+    canvas.height = highResSize * pixelRatio;
+
+    // Scale context for high-DPI displays
+    ctx.scale(pixelRatio, pixelRatio);
 
     // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, highResSize, highResSize);
 
     try {
       // Load and draw the cropped image
-      const img = new Image()
-      img.crossOrigin = "anonymous"
+      const img = new Image();
+      img.crossOrigin = "anonymous";
 
       await new Promise<void>((resolve, reject) => {
         img.onload = () => {
-          // Draw the photo
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-          resolve()
-        }
+          // Draw the photo at high resolution
+          ctx.drawImage(img, 0, 0, highResSize, highResSize);
+          resolve();
+        };
 
-        img.onerror = reject
-        img.src = croppedImage
-      })
+        img.onerror = reject;
+        img.src = croppedImage;
+      });
 
       // Generate final image URL
-      const finalImageUrl = canvas.toDataURL("image/png", 1.0)
-      setPreviewUrl(finalImageUrl)
-      onFinalImageReady(finalImageUrl)
+      const finalImageUrl = canvas.toDataURL("image/png", 1.0);
+      setPreviewUrl(finalImageUrl);
+      onFinalImageReady(finalImageUrl);
     } catch (error) {
-      console.error("Error generating framed image:", error)
+      console.error("Error generating framed image:", error);
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
   }
 
@@ -77,8 +84,12 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
   return (
     <Card className="p-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-foreground mb-2">Preview & Download</h2>
-        <p className="text-muted-foreground">Your {university.name} profile photo is ready!</p>
+        <h2 className="text-2xl font-bold text-foreground mb-2">
+          Preview & Download
+        </h2>
+        <p className="text-muted-foreground">
+          Your {university.name} profile photo is ready!
+        </p>
       </div>
 
       <div className="flex flex-col items-center space-y-6">
@@ -96,7 +107,7 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
         </div>
 
         <div className="flex gap-3">
-          <Button
+          {/* <Button
             variant="outline"
             onClick={generateFramedImage}
             disabled={isGenerating}
@@ -104,14 +115,18 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
           >
             <RefreshCw className={`h-4 w-4 ${isGenerating ? "animate-spin" : ""}`} />
             Regenerate
-          </Button>
+          </Button> */}
 
-          <Button onClick={downloadImage} disabled={!previewUrl || isGenerating} className="flex items-center gap-2">
+          <Button
+            onClick={downloadImage}
+            disabled={!previewUrl || isGenerating}
+            className="flex items-center gap-2"
+          >
             <Download className="h-4 w-4" />
             Download Image
           </Button>
         </div>
       </div>
     </Card>
-  )
+  );
 }
