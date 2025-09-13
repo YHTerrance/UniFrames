@@ -1,103 +1,164 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { PhotoUpload } from "@/components/photo-upload";
+import { PhotoCrop } from "@/components/photo-crop";
+import { UniversitySelector } from "@/components/university-selector";
+import { FrameGallery } from "@/components/frame-gallery";
+import { CanvasPreview } from "@/components/canvas-preview";
+import { StepNavigation } from "@/components/step-navigation";
+import type { PhotoState } from "@/lib/types";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [currentStep, setCurrentStep] = useState(0);
+  const [photoState, setPhotoState] = useState<PhotoState>({
+    originalFile: null,
+    croppedImage: null,
+    selectedUniversity: null,
+    selectedFrame: null,
+    finalImage: null,
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const totalSteps = 5;
+
+  const handlePhotoSelect = (file: File) => {
+    const url = URL.createObjectURL(file);
+    setPhotoState((prev) => ({
+      ...prev,
+      originalFile: file,
+      croppedImage: null, // Reset crop when new photo is selected
+    }));
+  };
+
+  const handleCropComplete = (croppedImage: string) => {
+    setPhotoState((prev) => ({
+      ...prev,
+      croppedImage,
+    }));
+  };
+
+  const handleUniversitySelect = (university: any) => {
+    setPhotoState((prev) => ({
+      ...prev,
+      selectedUniversity: university,
+      selectedFrame: null, // Reset frame when university changes
+    }));
+  };
+
+  const handleFrameSelect = (frame: any) => {
+    setPhotoState((prev) => ({
+      ...prev,
+      selectedFrame: frame,
+    }));
+  };
+
+  const handleFinalImageReady = (imageUrl: string) => {
+    setPhotoState((prev) => ({
+      ...prev,
+      finalImage: imageUrl,
+    }));
+  };
+
+  const canProceedToNextStep = () => {
+    switch (currentStep) {
+      case 0:
+        return photoState.originalFile !== null;
+      case 1:
+        return photoState.croppedImage !== null;
+      case 2:
+        return photoState.selectedUniversity !== null;
+      case 3:
+        return photoState.selectedFrame !== null;
+      case 4:
+        return photoState.finalImage !== null;
+      default:
+        return false;
+    }
+  };
+
+  const handleNext = () => {
+    if (canProceedToNextStep() && currentStep < totalSteps - 1) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <PhotoUpload
+            onPhotoSelect={handlePhotoSelect}
+            selectedPhoto={photoState.originalFile}
+          />
+        );
+      case 1:
+        return photoState.originalFile ? (
+          <PhotoCrop
+            imageUrl={URL.createObjectURL(photoState.originalFile)}
+            onCropComplete={handleCropComplete}
+          />
+        ) : null;
+      case 2:
+        return (
+          <UniversitySelector
+            onUniversitySelect={handleUniversitySelect}
+            selectedUniversity={photoState.selectedUniversity}
+          />
+        );
+      case 3:
+        return photoState.selectedUniversity ? (
+          <FrameGallery
+            university={photoState.selectedUniversity}
+            onFrameSelect={handleFrameSelect}
+            selectedFrame={photoState.selectedFrame}
+          />
+        ) : null;
+      case 4:
+        return photoState.croppedImage &&
+          photoState.selectedUniversity &&
+          photoState.selectedFrame ? (
+          <CanvasPreview
+            croppedImage={photoState.croppedImage}
+            university={photoState.selectedUniversity}
+            frame={photoState.selectedFrame}
+            onFinalImageReady={handleFinalImageReady}
+          />
+        ) : null;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <StepNavigation
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        onPrevious={handlePrevious}
+        onNext={handleNext}
+        canProceed={canProceedToNextStep()}
+      />
+
+      <main className="max-w-4xl mx-auto p-6">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
+            University Profile Photo Frame
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Create a professional profile photo with your university's branding.
+            Upload your photo, select your university, and choose from our
+            collection of frames.
+          </p>
         </div>
+
+        {renderCurrentStep()}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
