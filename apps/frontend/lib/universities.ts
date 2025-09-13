@@ -1,16 +1,10 @@
-import type { Frame } from "./types";
-
-export const frames: Frame[] = [
-  {
-    id: "classic-1",
-    universityId: "harvard",
-    name: "Classic Border",
-    url: "/ucla.webp",
-  },
-];
-
-export const getFramesByUniversity = (universityId: string): Frame[] => {
-  return frames.filter((frame) => frame.universityId === universityId);
+export const getFramesByUniversity = async (university: string) => {
+  const backendUrl = process.env.NEXT_PUBLIC_API_SERVER;
+  const encodedName = encodeURIComponent(university);
+  const response = await fetch(
+    `${backendUrl}/api/v1/frames/get-frame?name=${encodedName}`
+  );
+  return response.json();
 };
 
 export const getUniversities = async () => {

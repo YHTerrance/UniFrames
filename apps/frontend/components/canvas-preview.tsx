@@ -3,20 +3,40 @@
 import { useEffect, useRef, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download, RefreshCw } from "lucide-react"
-import type { University, Frame } from "@/lib/types"
+import { Download, RefreshCw } from "lucide-react";
 
 interface CanvasPreviewProps {
-  croppedImage: string
-  university: University
-  frame: Frame
-  onFinalImageReady: (imageUrl: string) => void
+  croppedImage: string;
+  university: string;
+  frame: string;
+  onFinalImageReady: (imageUrl: string) => void;
 }
 
-export function CanvasPreview({ croppedImage, university, frame, onFinalImageReady }: CanvasPreviewProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string>("")
+async function loadCleanImage(
+  url: string
+): Promise<{ img: HTMLImageElement; blobUrl: string }> {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  const blobUrl = URL.createObjectURL(blob);
+
+  const img = new Image();
+  img.src = blobUrl;
+
+  return new Promise((resolve, reject) => {
+    img.onload = () => resolve({ img, blobUrl });
+    img.onerror = reject;
+  });
+}
+
+export function CanvasPreview({
+  croppedImage,
+  university,
+  frame,
+  onFinalImageReady,
+}: CanvasPreviewProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
 
   const generateFramedImage = async () => {
     if (!canvasRef.current) return;
@@ -41,9 +61,10 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
     // Clear canvas
     ctx.clearRect(0, 0, highResSize, highResSize);
 
+    let frameBlobUrl: string | null = null;
     try {
       // Load both the cropped image and frame image concurrently
-      const [croppedImg, frameImg] = await Promise.all([
+      const [croppedImg, frameResult] = await Promise.all([
         new Promise<HTMLImageElement>((resolve, reject) => {
           const img = new Image();
           img.crossOrigin = "anonymous";
@@ -51,14 +72,11 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
           img.onerror = reject;
           img.src = croppedImage;
         }),
-        new Promise<HTMLImageElement>((resolve, reject) => {
-          const img = new Image();
-          img.crossOrigin = "anonymous";
-          img.onload = () => resolve(img);
-          img.onerror = reject;
-          img.src = frame.url;
-        })
+        loadCleanImage(frame),
       ]);
+
+      const frameImg = frameResult.img;
+      frameBlobUrl = frameResult.blobUrl;
 
       // Save the current context state
       ctx.save();
@@ -88,6 +106,10 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
     } catch (error) {
       console.error("Error generating framed image:", error);
     } finally {
+      // Clean up blob URL to prevent memory leaks
+      if (frameBlobUrl) {
+        URL.revokeObjectURL(frameBlobUrl);
+      }
       setIsGenerating(false);
     }
   };
@@ -100,7 +122,7 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
     if (!previewUrl) return;
 
     const link = document.createElement("a");
-    link.download = `${university.name.replace(/\s+/g, "_")}_profile_photo.png`;
+    link.download = `${university.replace(/\s+/g, "_")}_profile_photo.png`;
     link.href = previewUrl;
     link.click();
   };
@@ -112,7 +134,7 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
           Preview & Download
         </h2>
         <p className="text-muted-foreground">
-          Your {university.name} profile photo is ready!
+          Your {university} profile photo is ready!
         </p>
       </div>
 
