@@ -146,14 +146,14 @@ export default function Home() {
       />
 
       <main className="max-w-4xl mx-auto p-6">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            University Profile Photo Frame
+        <div className="text-center my-12">
+          <h1 className="text-4xl font-bold text-foreground mb-8">
+            Uni Frames
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Create a professional profile photo with your university's branding.
-            Upload your photo, select your university, and choose from our
-            collection of frames.
+            Create your profile photo with your university's branding. Upload
+            your photo, select your university, and choose from our collection
+            of frames.
           </p>
         </div>
 
