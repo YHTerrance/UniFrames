@@ -2,21 +2,13 @@
 
 interface StepNavigationProps {
   currentStep: number;
-  totalSteps: number;
+  stepNames: string[];
   onStepClick?: (stepIndex: number) => void;
 }
 
-const stepNames = [
-  "Upload Photo",
-  "Crop Photo",
-  "Select University",
-  "Choose Frame",
-  "Preview & Download",
-];
-
 export function StepNavigation({
   currentStep,
-  totalSteps,
+  stepNames,
   onStepClick,
 }: StepNavigationProps) {
   const handleStepClick = (stepIndex: number) => {
@@ -24,6 +16,8 @@ export function StepNavigation({
       onStepClick(stepIndex);
     }
   };
+
+  const totalSteps = stepNames.length;
 
   return (
     <div className="bg-card border-b border-border p-4">
@@ -63,7 +57,9 @@ export function StepNavigation({
                         handleStepClick(i);
                       }
                     }}
-                    aria-label={`${isClickable ? "Go to " : ""}Step ${i + 1}: ${stepNames[i]}`}
+                    aria-label={`${isClickable ? "Go to " : ""}Step ${i + 1}: ${
+                      stepNames[i]
+                    }`}
                   >
                     {i + 1}
                   </div>

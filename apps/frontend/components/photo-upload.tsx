@@ -66,7 +66,7 @@ export function PhotoUpload({
       <div
         {...getRootProps()}
         className={`
-          border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
+          flex justify-center items-center h-[400px] border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
           ${
             isDragActive
               ? "border-accent bg-accent/5"

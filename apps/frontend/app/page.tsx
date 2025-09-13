@@ -19,7 +19,15 @@ export default function Home() {
     finalImage: null,
   });
 
-  const totalSteps = 5;
+  const stepNames = [
+    "Upload Photo",
+    "Crop Photo",
+    "Select University",
+    "Choose Frame",
+    "Preview & Download",
+  ];
+
+  const totalSteps = stepNames.length;
 
   const handlePhotoSelect = (file: File) => {
     const url = URL.createObjectURL(file);
@@ -153,7 +161,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <StepNavigation
         currentStep={currentStep}
-        totalSteps={totalSteps}
+        stepNames={stepNames}
         onStepClick={handleStepClick}
       />
 
