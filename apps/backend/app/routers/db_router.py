@@ -38,4 +38,3 @@ def delete_item(item_id: int):
     conn.commit()
     conn.close()
     return {"message": f"id={item_id} DEL"}
-

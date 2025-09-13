@@ -1,13 +1,25 @@
 # app/routers/univ_frames.py
 from fastapi import APIRouter, HTTPException, Query
-from typing import Dict, Any
+from typing import Dict, Any, List
 from app.services.univ_frames_service import (
     find_university_id_by_name,
     get_frames_for_university_id,
     on_demand_sync_by_folder,
+    list_all_universities,
+    list_universities_with_frames
 )
 
+
 router = APIRouter(prefix="/frames", tags=["frames"])
+
+# @router.get("/universities", response_model=List[Dict[str, Any]])
+# def list_universities():
+#     return list_all_universities()
+
+@router.get("/universities", response_model=List[Dict[str, Any]])
+def list_universities():
+    """프레임이 있는 대학 리스트만 반환"""
+    return list_universities_with_frames()
 
 @router.get("/by-name")
 def frames_by_university_name(
@@ -38,6 +50,28 @@ def frames_by_university_name(
     return {
         "university_id": uid,
         "university_name": name,
+        "has_frames": True,
+        "count": len(frames),
+        "frames": frames,
+    }
+    
+@router.get("/by-id")
+def frames_by_university_id(
+    uid: int = Query(..., description="예: 'Carnegie Mellon University'")
+) -> Dict[str, Any]:
+    print("DEBUG >>> UID:", uid)
+
+    frames = get_frames_for_university_id(uid)
+    if not frames:
+        return {
+            "university_id": uid,
+            "has_frames": False,
+            "frames": [],
+            "message": f"No frames found for '{uid}'.",
+        }
+    print("DEBUG >>> Frames after sync:", frames)
+    return {
+        "university_id": uid,
         "has_frames": True,
         "count": len(frames),
         "frames": frames,
