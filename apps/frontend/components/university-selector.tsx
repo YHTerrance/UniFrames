@@ -63,18 +63,18 @@ export function UniversitySelector({
               className="h-auto p-4 justify-start"
             >
               <div className="flex items-center gap-3 w-full">
-                <Image
+                {/* <Image
                   src={university.logo || "/placeholder.svg"}
                   alt={`${university.name} logo`}
                   width={32}
                   height={32}
                   className="rounded-full"
-                />
+                /> */}
                 <span className="font-medium text-left flex-1">
                   {university.name}
                 </span>
                 {selectedUniversity?.id === university.id && (
-                  <Check className="h-4 w-4 text-accent-foreground" />
+                  <Check className="h-4 w-4 text-accent-background" />
                 )}
               </div>
             </Button>
