@@ -1,15 +1,10 @@
 from fastapi import Depends, HTTPException, status
 from app.services.frame_service import frame_service
-from app.services.profile_frame_service import profile_frame_service
 from app.services.gemini_frame_service import gemini_frame_service
 
 # Example dependency to get the frame service
 def get_frame_service():
     return frame_service
-
-# Dependency to get the profile frame service
-def get_profile_frame_service():
-    return profile_frame_service
 
 # Dependency to get the Gemini frame service
 def get_gemini_frame_service():
