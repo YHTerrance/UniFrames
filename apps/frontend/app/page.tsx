@@ -95,6 +95,8 @@ export default function Home() {
           <PhotoUpload
             onPhotoSelect={handlePhotoSelect}
             selectedPhoto={photoState.originalFile}
+            onNext={handleNext}
+            canProceed={canProceedToNextStep()}
           />
         );
       case 1:
@@ -102,6 +104,8 @@ export default function Home() {
           <PhotoCrop
             imageUrl={URL.createObjectURL(photoState.originalFile)}
             onCropComplete={handleCropComplete}
+            onNext={handleNext}
+            canProceed={canProceedToNextStep()}
           />
         ) : null;
       case 2:
@@ -109,6 +113,8 @@ export default function Home() {
           <UniversitySelector
             onUniversitySelect={handleUniversitySelect}
             selectedUniversity={photoState.selectedUniversity}
+            onNext={handleNext}
+            canProceed={canProceedToNextStep()}
           />
         );
       case 3:
@@ -117,6 +123,8 @@ export default function Home() {
             university={photoState.selectedUniversity}
             onFrameSelect={handleFrameSelect}
             selectedFrame={photoState.selectedFrame}
+            onNext={handleNext}
+            canProceed={canProceedToNextStep()}
           />
         ) : null;
       case 4:
@@ -137,13 +145,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <StepNavigation
-        currentStep={currentStep}
-        totalSteps={totalSteps}
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-        canProceed={canProceedToNextStep()}
-      />
+      <StepNavigation currentStep={currentStep} totalSteps={totalSteps} />
 
       <main className="max-w-4xl mx-auto p-6">
         <div className="text-center my-12">

@@ -5,11 +5,13 @@ import Cropper from "react-easy-crop";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { RotateCcw, ZoomIn } from "lucide-react";
+import { RotateCcw, ZoomIn, ChevronRight } from "lucide-react";
 
 interface PhotoCropProps {
   imageUrl: string;
   onCropComplete: (croppedImage: string) => void;
+  onNext: () => void;
+  canProceed: boolean;
 }
 
 interface CropArea {
@@ -19,7 +21,7 @@ interface CropArea {
   height: number;
 }
 
-export function PhotoCrop({ imageUrl, onCropComplete }: PhotoCropProps) {
+export function PhotoCrop({ imageUrl, onCropComplete, onNext, canProceed }: PhotoCropProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [lastProcessedCrop, setLastProcessedCrop] = useState<CropArea | null>(null);
@@ -123,7 +125,7 @@ export function PhotoCrop({ imageUrl, onCropComplete }: PhotoCropProps) {
           />
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-between">
           <Button
             variant="outline"
             onClick={() => {
@@ -134,6 +136,15 @@ export function PhotoCrop({ imageUrl, onCropComplete }: PhotoCropProps) {
           >
             <RotateCcw className="h-4 w-4" />
             Reset
+          </Button>
+
+          <Button
+            onClick={onNext}
+            disabled={!canProceed}
+            className="flex items-center gap-2"
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>

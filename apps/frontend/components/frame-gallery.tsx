@@ -4,23 +4,35 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getFramesByUniversity } from "@/lib/universities"
 import type { University, Frame } from "@/lib/types"
-import { Check } from "lucide-react"
-import Image from "next/image"
+import { Check, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 interface FrameGalleryProps {
-  university: University
-  onFrameSelect: (frame: Frame) => void
-  selectedFrame: Frame | null
+  university: University;
+  onFrameSelect: (frame: Frame) => void;
+  selectedFrame: Frame | null;
+  onNext: () => void;
+  canProceed: boolean;
 }
 
-export function FrameGallery({ university, onFrameSelect, selectedFrame }: FrameGalleryProps) {
-  const frames = getFramesByUniversity(university.id)
+export function FrameGallery({
+  university,
+  onFrameSelect,
+  selectedFrame,
+  onNext,
+  canProceed,
+}: FrameGalleryProps) {
+  const frames = getFramesByUniversity(university.id);
 
   return (
     <Card className="p-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-foreground mb-2">Choose Your Frame</h2>
-        <p className="text-muted-foreground">Select a frame style for {university.name}</p>
+        <h2 className="text-2xl font-bold text-foreground mb-2">
+          Choose Your Frame
+        </h2>
+        <p className="text-muted-foreground">
+          Select a frame style for {university.name}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -54,16 +66,31 @@ export function FrameGallery({ university, onFrameSelect, selectedFrame }: Frame
                 )}
               </div>
             </Button>
-            <p className="text-sm font-medium text-center mt-2 text-foreground">{frame.name}</p>
+            <p className="text-sm font-medium text-center mt-2 text-foreground">
+              {frame.name}
+            </p>
           </div>
         ))}
       </div>
 
       {frames.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">No frames available for {university.name} yet.</p>
+          <p className="text-muted-foreground">
+            No frames available for {university.name} yet.
+          </p>
         </div>
       )}
+
+      <div className="flex justify-end mt-6">
+        <Button
+          onClick={onNext}
+          disabled={!canProceed}
+          className="flex items-center gap-2"
+        >
+          Next
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
     </Card>
-  )
+  );
 }

@@ -1,19 +1,22 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-
 interface StepNavigationProps {
-  currentStep: number
-  totalSteps: number
-  onPrevious: () => void
-  onNext: () => void
-  canProceed: boolean
+  currentStep: number;
+  totalSteps: number;
 }
 
-const stepNames = ["Upload Photo", "Crop Photo", "Select University", "Choose Frame", "Preview & Download"]
+const stepNames = [
+  "Upload Photo",
+  "Crop Photo",
+  "Select University",
+  "Choose Frame",
+  "Preview & Download",
+];
 
-export function StepNavigation({ currentStep, totalSteps, onPrevious, onNext, canProceed }: StepNavigationProps) {
+export function StepNavigation({
+  currentStep,
+  totalSteps,
+}: StepNavigationProps) {
   return (
     <div className="bg-card border-b border-border p-4">
       <div className="max-w-4xl mx-auto">
@@ -29,8 +32,8 @@ export function StepNavigation({ currentStep, totalSteps, onPrevious, onNext, ca
                       i < currentStep
                         ? "bg-accent text-accent-foreground"
                         : i === currentStep
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground"
                     }
                   `}
                 >
@@ -54,30 +57,10 @@ export function StepNavigation({ currentStep, totalSteps, onPrevious, onNext, ca
         </div>
 
         {/* Step name */}
-        <h1 className="text-lg font-semibold text-foreground mb-4">{stepNames[currentStep]}</h1>
-
-        {/* Navigation buttons */}
-        <div className="flex justify-between">
-          <Button
-            variant="outline"
-            onClick={onPrevious}
-            disabled={currentStep === 0}
-            className="flex items-center gap-2 bg-transparent"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Previous
-          </Button>
-
-          <Button
-            onClick={onNext}
-            disabled={!canProceed || currentStep === totalSteps - 1}
-            className="flex items-center gap-2"
-          >
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+        <h1 className="text-lg font-semibold text-foreground mb-4">
+          {stepNames[currentStep]}
+        </h1>
       </div>
     </div>
-  )
+  );
 }
