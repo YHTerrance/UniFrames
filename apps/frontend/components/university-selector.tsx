@@ -1,17 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react";
 import { Search, Check, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { universities } from "@/lib/universities";
-import type { University } from "@/lib/types";
+// import { universities } from "@/lib/universities";
+import { getUniversities } from "@/lib/universities";
 import Image from "next/image";
 
 interface UniversitySelectorProps {
-  onUniversitySelect: (university: University) => void;
-  selectedUniversity: University | null;
+  onUniversitySelect: (university: string) => void;
+  selectedUniversity: string | null;
   onNext: () => void;
   onPrev: () => void;
   canProceed: boolean;
@@ -26,8 +26,18 @@ export function UniversitySelector({
 }: UniversitySelectorProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [universities, setUniversities] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      const universities = await getUniversities();
+      setUniversities(universities);
+    };
+    fetchUniversities();
+  }, []);
+
   const filteredUniversities = universities.filter((university) =>
-    university.name.toLowerCase().includes(searchTerm.toLowerCase())
+    university.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -55,9 +65,9 @@ export function UniversitySelector({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto">
           {filteredUniversities.map((university) => (
             <Button
-              key={university.id}
+              key={university}
               variant={
-                selectedUniversity?.id === university.id ? "default" : "outline"
+                selectedUniversity === university ? "default" : "outline"
               }
               onClick={() => onUniversitySelect(university)}
               className="h-auto p-4 justify-start"
@@ -71,9 +81,9 @@ export function UniversitySelector({
                   className="rounded-full"
                 /> */}
                 <span className="font-medium text-left flex-1">
-                  {university.name}
+                  {university}
                 </span>
-                {selectedUniversity?.id === university.id && (
+                {selectedUniversity === university && (
                   <Check className="h-4 w-4 text-accent-background" />
                 )}
               </div>

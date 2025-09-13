@@ -50,6 +50,7 @@ R2_ENDPOINT = f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
 s3 = boto3.client(
     "s3",
+    region_name='auto',
     endpoint_url=R2_ENDPOINT,
     aws_access_key_id=R2_ACCESS_KEY_ID,
     aws_secret_access_key=R2_SECRET_ACCESS_KEY,
