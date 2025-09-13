@@ -1,12 +1,17 @@
 from fastapi import APIRouter
 import sqlite3
+import os
 
-db_router = APIRouter()
+dbrouter = APIRouter()
 
 def get_conn():
-    return sqlite3.connect("univ.db")
+    db_path = os.getenv("UNIV_DB_PATH", "univ.db")  
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON;")
+    return conn
 
-@db_router.post("/add/{val}")
+@dbrouter.post("/add/{val}")
 def add_item(val: str):
     conn = get_conn()
     cur = conn.cursor()
@@ -16,7 +21,7 @@ def add_item(val: str):
     conn.close()
     return {"message": f"{val} ADD"}
 
-@db_router.get("/list")
+@dbrouter.get("/list")
 def list_items():
     conn = get_conn()
     cur = conn.cursor()
@@ -25,7 +30,7 @@ def list_items():
     conn.close()
     return {"items": rows}
 
-@db_router.delete("/delete/{item_id}")
+@dbrouter.delete("/delete/{item_id}")
 def delete_item(item_id: int):
     conn = get_conn()
     cur = conn.cursor()
@@ -33,3 +38,4 @@ def delete_item(item_id: int):
     conn.commit()
     conn.close()
     return {"message": f"id={item_id} DEL"}
+

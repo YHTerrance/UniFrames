@@ -11,7 +11,7 @@ api_router.include_router(frames_router, prefix="/frames", tags=["frames"])
 api_router.include_router(gemini_frames_router)
 
 # Add Import
-from app.routers.db_router import router as db_router
+from app.routers.db_router import dbrouter as db_router
 from app.routers.univ_frames import router as univ_frames_router
 
 api_router.include_router(db_router)

@@ -19,11 +19,6 @@ class Frame(FrameBase):
     class Config:
         orm_mode = True
 
-# Sample data for demonstration
-frames_db = [
-    {"id": 1, "title": "Sample Frame 1", "description": "This is a sample frame", "image_url": "https://example.com/frame1.jpg"},
-    {"id": 2, "title": "Sample Frame 2", "description": "Another sample frame", "image_url": "https://example.com/frame2.jpg"},
-]
 
 @router.get("/", response_model=List[Frame])
 async def get_frames():

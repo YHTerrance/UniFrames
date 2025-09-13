@@ -9,7 +9,7 @@ from app.services.univ_frames_service import (
 
 router = APIRouter(prefix="/frames", tags=["frames"])
 
-@router.get("/by-name")
+@router.get("/by-name/")
 def frames_by_university_name(
     name: str = Query(..., description="예: 'Carnegie Mellon University'"),
     sync_if_empty: bool = Query(True, description="DB에 없으면 R2의 '<name>/'에서 즉시 동기화 시도"),
