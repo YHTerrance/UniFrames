@@ -4,6 +4,7 @@ from app.services.r2_client import list_keys, public_url_for_key
 
 DEFAULT_DB = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../yujin/univ.db"))
 UNIV_DB_PATH = os.getenv("UNIV_DB_PATH", DEFAULT_DB)
+print(UNIV_DB_PATH)
 IMG_EXTS = (".png", ".jpg", ".jpeg", ".webp", ".gif")
 
 _norm_keep = re.compile(r"[a-z0-9\s-]", re.IGNORECASE)
@@ -19,6 +20,25 @@ def db():
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys=ON;")
     return con
+
+def list_all_universities():
+    conn = sqlite3.connect(UNIV_DB_PATH)
+    cur = conn.cursor()
+    cur.execute("SELECT university_id, name FROM Universities ORDER BY name")
+    rows = cur.fetchall()
+    conn.close()
+    return [{"id": r[0], "name": r[1]} for r in rows]
+
+def list_universities_with_frames():
+    with db() as con:  # 이미 row_factory=sqlite3.Row 로 세팅됨
+        rows = con.execute("""
+            SELECT DISTINCT u.university_id, u.name
+            FROM Universities u
+            JOIN frames f ON u.university_id = f.university_id
+            ORDER BY u.name
+        """).fetchall()
+        return [{"id": r["university_id"], "name": r["name"]} for r in rows]
+
 
 def find_university_id_by_name(query: str) -> Optional[int]:
     with db() as con:
