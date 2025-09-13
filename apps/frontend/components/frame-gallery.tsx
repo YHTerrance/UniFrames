@@ -12,6 +12,7 @@ interface FrameGalleryProps {
   onFrameSelect: (frame: Frame) => void;
   selectedFrame: Frame | null;
   onNext: () => void;
+  onPrev: () => void;
   canProceed: boolean;
 }
 
@@ -20,6 +21,7 @@ export function FrameGallery({
   onFrameSelect,
   selectedFrame,
   onNext,
+  onPrev,
   canProceed,
 }: FrameGalleryProps) {
   const frames = getFramesByUniversity(university.id);
@@ -81,15 +83,23 @@ export function FrameGallery({
         </div>
       )}
 
-      <div className="flex justify-end mt-6">
-        <Button
-          onClick={onNext}
-          disabled={!canProceed}
-          className="flex items-center gap-2"
-        >
-          Next
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+      <div className="space-y-4">
+        <div className="flex justify-between space-x-8">
+          <Button
+            variant="outline"
+            onClick={onPrev}
+            className="flex items-center gap-2 grow"
+          >
+            Previous
+          </Button>
+          <Button
+            onClick={onNext}
+            disabled={!canProceed}
+            className="flex items-center gap-2 grow"
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </Card>
   );

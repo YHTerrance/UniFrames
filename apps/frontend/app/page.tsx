@@ -140,6 +140,7 @@ export default function Home() {
             onFrameSelect={handleFrameSelect}
             selectedFrame={photoState.selectedFrame}
             onNext={handleNext}
+            onPrev={handlePrevious}
             canProceed={canProceedToNextStep()}
           />
         ) : null;
