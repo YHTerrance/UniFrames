@@ -88,6 +88,12 @@ export default function Home() {
     }
   };
 
+  const handleStepClick = (stepIndex: number) => {
+    if (stepIndex <= currentStep) {
+      setCurrentStep(stepIndex);
+    }
+  };
+
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 0:
@@ -145,7 +151,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <StepNavigation currentStep={currentStep} totalSteps={totalSteps} />
+      <StepNavigation
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        onStepClick={handleStepClick}
+      />
 
       <main className="max-w-4xl mx-auto p-6">
         <div className="text-center my-12">
