@@ -1,0 +1,68 @@
+{
+  "prompt_guide": {
+    "core_structure": "simple circular logo, sleek and modern, CMU colors, motto on the border, Scotty mascot on the border, with a fully transparent center",
+    "style_definition": {
+      "primary_style": "minimalist graphic design",
+      "rendering_quality": "clean, crisp, high-resolution",
+      "surface_textures": "smooth, matte finish",
+      "lighting": "soft ambient, no harsh shadows"
+    },
+    "technical_specifications": {
+      "aspect_ratio": "1:1",
+      "resolution": "professional quality, high definition",
+      "rendering": "anti-aliasing, clean lines",
+      "physics_accuracy": "n/a"
+    },
+    "material_properties": {
+      "surfaces": "sleek, smooth, no scratches or imperfections"
+    },
+    "environmental_factors": {
+      "atmospheric_conditions": "n/a",
+      "time/season": "n/a",
+      "particle_effects": "n/a"
+    },
+    "composition_controls": {
+      "perspective": "flat lay",
+      "framing": "centered",
+      "subject_placement": "simple circular design, the center is fully transparent, the circular border touches all four boundaries of the square frame, no additional whitespace between the frame and the border"
+    },
+    "quality_keywords": {
+      "include": [
+        "sleek",
+        "modern",
+        "simple",
+        "minimalist",
+        "clean",
+        "crisp",
+        "high-resolution",
+        "CMU colors"
+      ],
+      "avoid": [
+        "complex",
+        "messy",
+        "digital artifacts",
+        "pixelation",
+        "unrealistic proportions"
+      ],
+      "reference": "corporate logo design standards"
+    }
+  },
+  "visual_elements": [
+    {
+      "element": "logo shape",
+      "description": "A simple, sleek circular border with a fully transparent center. The border should expand to the full size of the 1:1 canvas, touching its edges."
+    },
+    {
+      "element": "colors",
+      "description": "Utilize CMU's official colors: Carnegie Red (#C41230), Black (#000000), Steel Gray (#E0E0E0), and Gray (#6D6E71)."
+    },
+    {
+      "element": "mascot",
+      "description": "A stylized, minimalist representation of the Scotty mascot placed on the circular border, on the top half."
+    },
+    {
+      "element": "motto",
+      "description": "The motto 'My heart is in the work' should be incorporated in a clean, modern font, placed on the circular border, following the curve of the shape on the bottom half."
+    }
+  ]
+}
