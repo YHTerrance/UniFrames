@@ -2,7 +2,17 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import api_router
-from app.routers.db_router import db_router 
+from app.routers.db_router import dbrouter 
+
+
+# # 👇 add these lines at the very top of main.py
+# import os
+# from pathlib import Path
+# from dotenv import load_dotenv
+
+# ENV_FILE = os.getenv("ENV_FILE") or str(Path(__file__).resolve().parent / "db.env")
+# load_dotenv(ENV_FILE)
+
 
 # Create FastAPI app
 app = FastAPI(
@@ -32,11 +42,6 @@ async def health_check():
 
 # Include API router
 app.include_router(api_router, prefix="/api/v1")
-
-
-# Include routers
-app.include_router(api_router, prefix="/api/v1")
-app.include_router(db_router, prefix="/db")
 
 
 # Run the application
