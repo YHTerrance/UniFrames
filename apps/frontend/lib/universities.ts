@@ -50,40 +50,12 @@ export const frames: Frame[] = [
     id: "classic-1",
     universityId: "harvard",
     name: "Classic Border",
-    url: "/placeholder-epjfw.png",
+    url: "/ucla.webp",
   },
-  {
-    id: "modern-1",
-    universityId: "harvard",
-    name: "Modern Frame",
-    url: "/placeholder-31k2b.png",
-  },
-  {
-    id: "classic-2",
-    universityId: "stanford",
-    name: "Classic Border",
-    url: "/placeholder-8hrg3.png",
-  },
-  {
-    id: "modern-2",
-    universityId: "stanford",
-    name: "Modern Frame",
-    url: "/placeholder-ab9bu.png",
-  },
-  {
-    id: "classic-3",
-    universityId: "mit",
-    name: "Classic Border",
-    url: "/placeholder-sl1gg.png",
-  },
-  {
-    id: "modern-3",
-    universityId: "mit",
-    name: "Modern Frame",
-    url: "/placeholder-zgfmp.png",
-  },
-]
+];
 
 export const getFramesByUniversity = (universityId: string): Frame[] => {
-  return frames.filter((frame) => frame.universityId === universityId)
-}
+  return frames.filter((frame) => frame.universityId === universityId);
+};
+
+

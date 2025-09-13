@@ -42,20 +42,44 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
     ctx.clearRect(0, 0, highResSize, highResSize);
 
     try {
-      // Load and draw the cropped image
-      const img = new Image();
-      img.crossOrigin = "anonymous";
+      // Load both the cropped image and frame image concurrently
+      const [croppedImg, frameImg] = await Promise.all([
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = croppedImage;
+        }),
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = frame.url;
+        })
+      ]);
 
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => {
-          // Draw the photo at high resolution
-          ctx.drawImage(img, 0, 0, highResSize, highResSize);
-          resolve();
-        };
+      // Save the current context state
+      ctx.save();
 
-        img.onerror = reject;
-        img.src = croppedImage;
-      });
+      // Create circular clipping path for the photo
+      const centerX = highResSize / 2;
+      const centerY = highResSize / 2;
+      const radius = highResSize / 2;
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.clip();
+
+      // Draw the photo at high resolution within the circular clip
+      ctx.drawImage(croppedImg, 0, 0, highResSize, highResSize);
+
+      // Restore context to remove clipping path
+      ctx.restore();
+
+      // Draw the frame image as an overlay on top
+      ctx.drawImage(frameImg, 0, 0, highResSize, highResSize);
 
       // Generate final image URL
       const finalImageUrl = canvas.toDataURL("image/png", 1.0);
@@ -66,20 +90,20 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
     } finally {
       setIsGenerating(false);
     }
-  }
+  };
 
   useEffect(() => {
-    generateFramedImage()
-  }, [croppedImage, university, frame])
+    generateFramedImage();
+  }, [croppedImage, university, frame]);
 
   const downloadImage = () => {
-    if (!previewUrl) return
+    if (!previewUrl) return;
 
-    const link = document.createElement("a")
-    link.download = `${university.name.replace(/\s+/g, "_")}_profile_photo.png`
-    link.href = previewUrl
-    link.click()
-  }
+    const link = document.createElement("a");
+    link.download = `${university.name.replace(/\s+/g, "_")}_profile_photo.png`;
+    link.href = previewUrl;
+    link.click();
+  };
 
   return (
     <Card className="p-6">
@@ -96,8 +120,8 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
         <div className="relative">
           <canvas
             ref={canvasRef}
-            className="max-w-full h-auto border border-border rounded-lg shadow-lg"
-            style={{ maxWidth: "300px" }}
+            className="max-w-full h-auto border border-border shadow-lg"
+            style={{ maxWidth: "300px", borderRadius: "50%" }}
           />
           {isGenerating && (
             <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-lg">
@@ -107,16 +131,6 @@ export function CanvasPreview({ croppedImage, university, frame, onFinalImageRea
         </div>
 
         <div className="flex gap-3">
-          {/* <Button
-            variant="outline"
-            onClick={generateFramedImage}
-            disabled={isGenerating}
-            className="flex items-center gap-2 bg-transparent"
-          >
-            <RefreshCw className={`h-4 w-4 ${isGenerating ? "animate-spin" : ""}`} />
-            Regenerate
-          </Button> */}
-
           <Button
             onClick={downloadImage}
             disabled={!previewUrl || isGenerating}

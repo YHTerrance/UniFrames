@@ -4,8 +4,6 @@ import { useState, useCallback, useRef } from "react";
 import Cropper from "react-easy-crop";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { RotateCcw, ZoomIn, ChevronRight } from "lucide-react";
 
 interface PhotoCropProps {
   imageUrl: string;
