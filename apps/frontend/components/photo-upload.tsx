@@ -1,8 +1,8 @@
 "use client"
 
-import { useCallback } from "react"
+import { useCallback, useState, useEffect } from "react"
 import { useDropzone } from "react-dropzone"
-import { Upload, ImageIcon } from "lucide-react"
+import { Upload } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
@@ -12,6 +12,21 @@ interface PhotoUploadProps {
 }
 
 export function PhotoUpload({ onPhotoSelect, selectedPhoto }: PhotoUploadProps) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (selectedPhoto) {
+      const url = URL.createObjectURL(selectedPhoto)
+      setPreviewUrl(url)
+
+      return () => {
+        URL.revokeObjectURL(url)
+      }
+    } else {
+      setPreviewUrl(null)
+    }
+  }, [selectedPhoto])
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
@@ -48,7 +63,13 @@ export function PhotoUpload({ onPhotoSelect, selectedPhoto }: PhotoUploadProps) 
 
         {selectedPhoto ? (
           <div className="space-y-4">
-            <ImageIcon className="mx-auto h-12 w-12 text-accent" />
+            {previewUrl && (
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="mx-auto h-32 w-32 object-cover rounded-lg shadow-md"
+              />
+            )}
             <div>
               <p className="text-lg font-medium text-foreground">{selectedPhoto.name}</p>
               <p className="text-sm text-muted-foreground">{(selectedPhoto.size / 1024 / 1024).toFixed(2)} MB</p>
