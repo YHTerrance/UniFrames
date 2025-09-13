@@ -6,8 +6,11 @@ from app.services.univ_frames_service import (
     get_frames_for_university_id,
     on_demand_sync_by_folder,
     list_all_universities,
-    list_universities_with_frames
+    list_universities_with_frames,
+    list_universities_with_frames_from_r2,
+    get_public_frame_urls_for_university
 )
+from urllib.parse import quote
 
 
 router = APIRouter(prefix="/frames", tags=["frames"])
@@ -76,3 +79,23 @@ def frames_by_university_id(
         "count": len(frames),
         "frames": frames,
     }
+    
+@router.get("/universities/from-r2", response_model=List[str])
+def list_universities_from_r2(
+    strict_check: bool = Query(False, description="폴더 내부에 실제 이미지가 있는지 빠르게 확인")
+) -> List[str]:
+    """
+    Cloudflare R2 'frame-images' 버킷에 존재하는 대학 폴더명(=대학 이름) 리스트만 반환
+    """
+    return list_universities_with_frames_from_r2(strict_check=strict_check)
+
+
+@router.get("/get-frame", response_model=List[str])
+def get_frame(
+    name: str = Query(..., description="대학 이름(폴더명)"),
+    recursive: bool = Query(True, description="하위 폴더까지 */1.png 탐색"),
+) -> List[str]:
+    urls = get_public_frame_urls_for_university(name=name, recursive=recursive)
+    if not urls:
+        raise HTTPException(status_code=404, detail=f"No '1.png' found under '{name}/'")
+    return urls
