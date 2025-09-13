@@ -24,7 +24,7 @@ export function StepNavigation({
       <div className="max-w-4xl mx-auto">
         {/* Progress indicator */}
         <div className="flex items-center justify-center">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-start space-x-2">
             {Array.from({ length: totalSteps }, (_, i) => {
               const isClickable = i <= currentStep && onStepClick;
               const isCompleted = i < currentStep;

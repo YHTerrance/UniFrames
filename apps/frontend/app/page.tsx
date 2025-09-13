@@ -119,6 +119,7 @@ export default function Home() {
             imageUrl={URL.createObjectURL(photoState.originalFile)}
             onCropComplete={handleCropComplete}
             onNext={handleNext}
+            onPrev={handlePrevious}
             canProceed={canProceedToNextStep()}
           />
         ) : null;
@@ -128,6 +129,7 @@ export default function Home() {
             onUniversitySelect={handleUniversitySelect}
             selectedUniversity={photoState.selectedUniversity}
             onNext={handleNext}
+            onPrev={handlePrevious}
             canProceed={canProceedToNextStep()}
           />
         );

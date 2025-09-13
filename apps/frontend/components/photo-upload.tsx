@@ -2,9 +2,9 @@
 
 import { useCallback, useState, useEffect } from "react"
 import { useDropzone } from "react-dropzone"
-import { Upload, ChevronRight } from "lucide-react";
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Upload } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface PhotoUploadProps {
   onPhotoSelect: (file: File) => void;
@@ -121,10 +121,9 @@ export function PhotoUpload({
         <Button
           onClick={onNext}
           disabled={!canProceed}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full"
         >
           Next
-          <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
     </Card>

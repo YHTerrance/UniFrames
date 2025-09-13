@@ -11,6 +11,7 @@ interface PhotoCropProps {
   imageUrl: string;
   onCropComplete: (croppedImage: string) => void;
   onNext: () => void;
+  onPrev: () => void;
   canProceed: boolean;
 }
 
@@ -21,14 +22,24 @@ interface CropArea {
   height: number;
 }
 
-export function PhotoCrop({ imageUrl, onCropComplete, onNext, canProceed }: PhotoCropProps) {
+export function PhotoCrop({
+  imageUrl,
+  onCropComplete,
+  onNext,
+  onPrev,
+  canProceed,
+}: PhotoCropProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [lastProcessedCrop, setLastProcessedCrop] = useState<CropArea | null>(null);
+  const [lastProcessedCrop, setLastProcessedCrop] = useState<CropArea | null>(
+    null
+  );
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const areCropAreasEqual = useCallback((a: CropArea, b: CropArea) => {
-    return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+    return (
+      a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height
+    );
   }, []);
 
   const createCroppedImage = useCallback(
@@ -70,7 +81,10 @@ export function PhotoCrop({ imageUrl, onCropComplete, onNext, canProceed }: Phot
   const onCropCompleteCallback = useCallback(
     (croppedArea: any, croppedAreaPixels: CropArea) => {
       // Skip if crop area hasn't changed
-      if (lastProcessedCrop && areCropAreasEqual(lastProcessedCrop, croppedAreaPixels)) {
+      if (
+        lastProcessedCrop &&
+        areCropAreasEqual(lastProcessedCrop, croppedAreaPixels)
+      ) {
         return;
       }
 
@@ -85,7 +99,12 @@ export function PhotoCrop({ imageUrl, onCropComplete, onNext, canProceed }: Phot
         setLastProcessedCrop(croppedAreaPixels);
       }, 300);
     },
-    [createCroppedImage, lastProcessedCrop, areCropAreasEqual, setLastProcessedCrop]
+    [
+      createCroppedImage,
+      lastProcessedCrop,
+      areCropAreasEqual,
+      setLastProcessedCrop,
+    ]
   );
   return (
     <Card className="p-6">
@@ -98,7 +117,7 @@ export function PhotoCrop({ imageUrl, onCropComplete, onNext, canProceed }: Phot
         </p>
       </div>
 
-      <div className="relative h-96 bg-muted rounded-lg mb-6">
+      <div className="relative h-[400px] bg-muted rounded-lg mb-6">
         <Cropper
           image={imageUrl}
           crop={crop}
@@ -111,40 +130,21 @@ export function PhotoCrop({ imageUrl, onCropComplete, onNext, canProceed }: Phot
           showGrid={true}
         />
       </div>
-
       <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <ZoomIn className="h-4 w-4 text-muted-foreground" />
-          <Slider
-            value={[zoom]}
-            onValueChange={(value) => setZoom(value[0])}
-            min={1}
-            max={3}
-            step={0.1}
-            className="flex-1"
-          />
-        </div>
-
-        <div className="flex justify-between">
+        <div className="flex justify-between space-x-8">
           <Button
             variant="outline"
-            onClick={() => {
-              setCrop({ x: 0, y: 0 });
-              setZoom(1);
-            }}
-            className="flex items-center gap-2"
+            onClick={onPrev}
+            className="flex items-center gap-2 grow"
           >
-            <RotateCcw className="h-4 w-4" />
-            Reset
+            Previous
           </Button>
-
           <Button
             onClick={onNext}
             disabled={!canProceed}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 grow"
           >
             Next
-            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
