@@ -99,6 +99,9 @@ Note: If your R2 public domain differs from the default, update `apps/frontend/n
 - Final image is composed client-side on a high-DPI canvas and exported as PNG.
 - Optionally, the backend can generate frames via the Gemini API.
 
+<img width="1464" height="823" alt="Screenshot 2025-09-13 at 10 35 32 PM" src="https://github.com/user-attachments/assets/c66f2760-a5d0-4cd7-8d4e-52958a1c752a" />
+
+
 ## Configuration
 
 - Frontend → Backend URL: `apps/frontend/lib/universities.ts:3` expects `NEXT_PUBLIC_API_SERVER`.
